@@ -6,3 +6,4 @@
 
 # Environment File
 .env
+/config
