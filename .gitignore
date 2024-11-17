@@ -4,6 +4,8 @@
 # Logs Directory
 /logs
 
-# Environment File
+# Environment Variables
 .env
-/config
+
+# Secret Keys
+/keys
