@@ -1,6 +1,9 @@
 
 module.exports.GET_USER_ID = 
-`SELECT TOP 1 [user_id] FROM App_User WITH(NOLOCK) WHERE username = @username;`;
+`SELECT [user_id] AS userId FROM App_User WITH(NOLOCK) WHERE username = @username;`;
+
+module.exports.GET_LOGIN_PASSWORD = 
+`SELECT [hashed_password] AS hashedPassword FROM [App_User] WITH(NOLOCK) WHERE [user_id] = @userId;`;
 
 module.exports.INSERT_NEW_USER_RECORD = 
 `INSERT INTO [App_User] 

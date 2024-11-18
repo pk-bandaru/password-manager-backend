@@ -31,6 +31,19 @@ module.exports.getUserId = async (db, username) => {
     }
 }
 
+module.exports.getLoginPassword = async (db, userId) => {
+    try{
+        const dbResponse = await db.request()
+                                    .input('userId', sql.Int, userId)
+                                    .query(QUERIES.GET_LOGIN_PASSWORD);
+                                    
+        return dbSuccessResponseWithRecordset(dbResponse.recordset);
+    }
+    catch(error){
+        return defaultDbErrorHandler(error, 'getLoginPassword');
+    }
+}
+
 module.exports.insertNewUserRecord = async (db, user) => {
     try{
         const dbResponse = await db.request()
