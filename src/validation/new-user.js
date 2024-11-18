@@ -22,13 +22,13 @@ function validateField(feildName, fieldValue, maxLength, isPasscode=false)
     return {isValid: true};
 }
 
-function validateNewUserData(user)
+function validateInputFields(fields, fieldNames, maxLengths)
 {
-    const fieldNames = ["firstname", "lastname", "username", "password", "passcode", "hint"];
-    const maxLengths = [32, 16, 16, 16, 4, 100];
+    for (let i=0; i<fieldNames.length; i++)
+    {
+        const fieldName = fieldNames[i];
+        const response = validateField(fieldName, fields[fieldName], maxLengths[i], fieldName==='passcode');
 
-    for (let i=0; i<fieldNames.length; i++){
-        const response = validateField(fieldNames[i], user[fieldNames[i]], maxLengths[i], i==4)
         if (!response.isValid){
             return response;
         }
@@ -36,4 +36,29 @@ function validateNewUserData(user)
     return {isValid: true};
 }
 
-module.exports = validateNewUserData;
+function validateNewUserData(user)
+{
+    const fieldNames = ["firstname", "lastname", "username", "password", "passcode", "hint"];
+    const maxLengths = [32, 16, 16, 16, 4, 100];
+    return validateInputFields(user, fieldNames, maxLengths);
+}
+
+function validateLoginCredentials(credentials)
+{
+    const fieldNames = ["username", "password"];
+    const maxLengths = [16, 16];
+    return validateInputFields(credentials, fieldNames, maxLengths);
+}
+
+function validatePasscode(passcode)
+{
+    const fieldName = 'passcode';
+    const maxLength = 4;
+    return validateInputFields(passcode, fieldName, maxLength);
+}
+
+module.exports = {
+    validateNewUserData,
+    validateLoginCredentials,
+    validatePasscode
+}
