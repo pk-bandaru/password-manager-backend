@@ -17,9 +17,13 @@ const verifyAuthToken = (token) => {
     catch(error){
         const logger = getLogger(__filename, 'verifyAuthToken');
         const {name, message, stack, expiredAt} = error;
-        const tokenExpiredAt = message === 'TokenExpiredError' ? expiredAt.toString() : 'N/A';
+
+        const isTokenExpiredError = (name === 'TokenExpiredError');
+        const response = isTokenExpiredError ? 0 : null;
+        const tokenExpiredAt = isTokenExpiredError ? expiredAt.toString() : 'N/A';
+
         logger.error(`JWT Token verify error: ${message}`, {name, stack, tokenExpiredAt});
-        return null;
+        return response;
     }
 }
 
