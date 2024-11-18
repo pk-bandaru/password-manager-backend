@@ -13,6 +13,12 @@ const sendServerResponse = (response, statusCode, data) => {
 const errorResponse = (response, errorMessage) => sendServerResponse(response, 400, {message: errorMessage});
 const internalServerErrorResponse = (response) => sendServerResponse(response, 500, 'Internal Server Error');
 
+// Unauthorized Response
+const unAuthResponse = (response, tokenExpired=false) => {
+    const message = tokenExpired ? 'JWT Token Expired' : 'Invalid JWT Token';
+    sendServerResponse (response, 401, {tokenExpired, message});
+}
+
 // POST API: /register Validation
 module.exports.validateRegistration = async (request, response, next) => {
     const user = request.body;
@@ -52,6 +58,7 @@ module.exports.registerNewUser = async (request, response) => {
     sendServerResponse(response, 201, {message: 'User Registration Successful'});
 }
 
+// POST API: /login Validation
 module.exports.validateLogin = async (request, response, next) => {
     const credentials = request.body;
     const credsReport = validateLoginCredentials(credentials);
@@ -76,6 +83,7 @@ module.exports.validateLogin = async (request, response, next) => {
     next();
 }
 
+// POST API: /login
 module.exports.userLogin = async (request, response) => {
     const {userId, password} = request.body;
     const {db} = request.app.locals;
@@ -99,4 +107,26 @@ module.exports.userLogin = async (request, response) => {
         jwtToken
     };
     sendServerResponse(response, 200, responseData);
+}
+
+// Intermediate Handler for verifying JWT token for all logged in users
+module.exports.validateToken = async (request, response, next) => {
+    const authHeader = request.headers['authorization'];
+    
+    if(authHeader == undefined || authHeader === '' || !authHeader.startsWith('Bearer ')){
+        return unAuthResponse(response);
+    }
+
+    const jwtToken = authHeader.split(' ')[1];
+    const userId = verifyAuthToken(jwtToken);
+
+    if(userId === null){
+        return unAuthResponse(response);
+    }
+
+    if(userId === 0){
+        return unAuthResponse(response, true);
+    }
+    request.userId = userId;
+    next();
 }
