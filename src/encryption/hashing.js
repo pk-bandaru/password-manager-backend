@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const ALGORITHMS = require('./constants');
-const hashKeys = require('../../config/hash-keys.json');
+const hashKeys = require('../../keys/hash.json');
 
 const hashifyCredential = (credential, algorithm, secretKeys) => {
     const {salt, pepper} = secretKeys;
