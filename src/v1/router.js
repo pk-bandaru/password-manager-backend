@@ -1,7 +1,7 @@
 // V1 Router Module
 const express = require('express');
 const authHandler = require('./handler/auth');
-const accHandler = require('./handler/accounts');
+const accHandler = require('./handler/account');
 
 const router = express.Router();
 
