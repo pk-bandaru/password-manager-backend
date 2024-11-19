@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const STANDARDS = require('./standards');
+const {APP_PASSCODE} = require('../../keys/app.json');
 const encryptKeys = require('../../keys/encrypt.json');
 
 // Generates Secret Key and Initialization Vector
@@ -15,9 +16,6 @@ function getSecretKeyAndIv(secretKeys, passcode)
 function encryptData(data, algorithm, secretKeys, passcode)
 {
     const {key, iv} = getSecretKeyAndIv(secretKeys, passcode);
-    console.log(key.length);
-    console.log(iv.length);
-    
 
     const cipher = crypto.createCipheriv(algorithm, Buffer.from(key), Buffer.from(iv));
     const encryptedHexCode = cipher.update(data, 'utf8', 'hex') + cipher.final('hex');
@@ -43,11 +41,11 @@ function decryptData(encryptedString, algorithm, secretKeys, passcode)
 }
 
 // Encryption Constructors
-const encryptAccountName = (accountName, passcode) => encryptData(
+const encryptAccountName = (accountName) => encryptData(
     accountName,
     STANDARDS.AES_128,
     encryptKeys.accountName,
-    passcode
+    APP_PASSCODE
 );
 
 const encryptUsername = (username, passcode) => encryptData(
@@ -65,11 +63,11 @@ const encryptPassword = (password, passcode) => encryptData(
 );
 
 // Decryption Constructors
-const decryptAccountName = (encryptedString, passcode) => decryptData(
+const decryptAccountName = (encryptedString) => decryptData(
     encryptedString,
     STANDARDS.AES_128,
     encryptKeys.accountName,
-    passcode
+    APP_PASSCODE
 );
 
 const decryptUsername = (username, passcode) => decryptData(
