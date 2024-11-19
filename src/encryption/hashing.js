@@ -10,7 +10,7 @@ const hashifyCredential = (credential, algorithm, secretKeys) => {
 
 const hashifyLoginPassword = password => hashifyCredential(
     password,
-    STANDARDS.SHA_256,
+    STANDARDS.SHA_512,
     hashKeys.loginPassword
 );
 
