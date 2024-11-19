@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const {getLogger} = require('../logger');
-const {JWT_SECRET_KEY} = require('../../keys/token.json');
+const {JWT_SECRET_KEY} = require('../../keys/app.json');
 
 const getAuthToken = (userId) => {
     const payload = { userId };
