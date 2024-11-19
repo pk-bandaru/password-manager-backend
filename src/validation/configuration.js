@@ -20,7 +20,7 @@ function validateEnvironmentVariables()
     const booleans = ['true','false'];
 
     // Destructure Environment variables
-    const {ENVIRONMENT, SERVER_PORT, LOG_LEVEL, APP_PASSCODE, TRUST_SERVER_CERTIFICATE, ENCRYPT} = process.env;
+    const {ENVIRONMENT, SERVER_PORT, LOG_LEVEL, TRUST_SERVER_CERTIFICATE, ENCRYPT} = process.env;
 
     // Actual Validation
     process.env.ENVIRONMENT = validate(ENVIRONMENT, 'dev', environments);
@@ -28,9 +28,6 @@ function validateEnvironmentVariables()
 
     const serverPort = validate(SERVER_PORT, 3002);
     process.env.SERVER_PORT = isNaN(serverPort) ? 3002 : serverPort;
-
-    const appPasscode = validate(APP_PASSCODE, 1234);
-    process.env.APP_PASSCODE = isNaN(appPasscode) ? 1234 : appPasscode;
 
     process.env.TRUST_SERVER_CERTIFICATE = validate(TRUST_SERVER_CERTIFICATE, 'false', booleans);
     process.env.ENCRYPT = validate(ENCRYPT, 'true', booleans);
