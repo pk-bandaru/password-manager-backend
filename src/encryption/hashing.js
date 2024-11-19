@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const ALGORITHMS = require('./constants');
+const STANDARDS = require('./standards');
 const hashKeys = require('../../keys/hash.json');
 
 const hashifyCredential = (credential, algorithm, secretKeys) => {
@@ -10,19 +10,19 @@ const hashifyCredential = (credential, algorithm, secretKeys) => {
 
 const hashifyLoginPassword = password => hashifyCredential(
     password,
-    ALGORITHMS.PASSWORD_HASH_ALGO,
+    STANDARDS.SHA_256,
     hashKeys.loginPassword
 );
 
 const hashifyDefaultPasscode = defaultPasscode => hashifyCredential(
     defaultPasscode,
-    ALGORITHMS.PASSCODE_HASH_ALGO,
+    STANDARDS.SHA_256,
     hashKeys.defaultPasscode
 );
 
 const hashhifyPrivatePasscode = privatePasscode => hashifyCredential(
     privatePasscode,
-    ALGORITHMS.PASSCODE_HASH_ALGO,
+    STANDARDS.SHA_256,
     hashKeys.privatePasscode
 );
 
