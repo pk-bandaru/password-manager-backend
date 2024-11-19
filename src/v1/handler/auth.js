@@ -2,16 +2,10 @@
 const dbo = require('../../db/handler/auth');
 const algo = require('../../encryption/hashing');
 const {getAuthToken, verifyAuthToken} = require('../../token');
+const {sendServerResponse, internalServerErrorResponse} = require('./default');
 const {validateNewUserData, validateLoginCredentials} = require('../../validation/user');
 
-// Default Error Response
-const sendServerResponse = (response, statusCode, data) => {
-    response.status(statusCode);
-    response.send(data);
-}
-
 const errorResponse = (response, errorMessage) => sendServerResponse(response, 400, {message: errorMessage});
-const internalServerErrorResponse = (response) => sendServerResponse(response, 500, 'Internal Server Error');
 
 // Unauthorized Response
 const unAuthResponse = (response, tokenExpired=false) => {
