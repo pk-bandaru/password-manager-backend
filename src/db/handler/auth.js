@@ -1,21 +1,7 @@
 // DB Handler: Authentication
 const sql = require('mssql');
 const QUERIES = require('../queries/auth');
-const {getLogger} = require('../../logger');
-
-// Commonly used responses
-const dbResponseObject = (isExecutionSuccessful, data=null) => ({isExecutionSuccessful, data});
-const defaultErrorResponse = () => dbResponseObject(false);
-const dbSuccessResponse = () => dbResponseObject(true);
-const dbSuccessResponseWithRecordset = (data) => dbResponseObject(true, data);
-
-// Error Handler, Catch Block
-const defaultDbErrorHandler = (error, method) => {
-    const logger = getLogger(__filename, method);
-    const {message, name, stack} = error;
-    logger.error(`DB Execution Error: ${message}`, {name, stack});
-    return defaultErrorResponse();
-}
+const {dbSuccessResponse, defaultDbErrorHandler} = require('./default');
 
 // Get user ID based on input username
 module.exports.getUserId = async (db, username) => {
@@ -24,10 +10,10 @@ module.exports.getUserId = async (db, username) => {
                                     .input('username', sql.VarChar(16), username)
                                     .query(QUERIES.GET_USER_ID);
 
-        return dbSuccessResponseWithRecordset(dbResponse.recordset);
+        return dbSuccessResponse(dbResponse.recordset);
     }
     catch(error){
-        return defaultDbErrorHandler(error, 'getUserId');
+        return defaultDbErrorHandler(error, __filename, 'getUserId');
     }
 }
 
@@ -37,10 +23,10 @@ module.exports.getLoginPassword = async (db, userId) => {
                                     .input('userId', sql.Int, userId)
                                     .query(QUERIES.GET_LOGIN_PASSWORD);
                                     
-        return dbSuccessResponseWithRecordset(dbResponse.recordset);
+        return dbSuccessResponse(dbResponse.recordset);
     }
     catch(error){
-        return defaultDbErrorHandler(error, 'getLoginPassword');
+        return defaultDbErrorHandler(error, __filename, 'getLoginPassword');
     }
 }
 
@@ -57,6 +43,6 @@ module.exports.insertNewUserRecord = async (db, user) => {
         return dbSuccessResponse();
     }
     catch(error){
-        return defaultDbErrorHandler(error, 'insertNewUserRecord');
+        return defaultDbErrorHandler(error, __filename, 'insertNewUserRecord');
     }
 }
