@@ -5,21 +5,27 @@ const helmet = require('helmet');
 const cors = require('cors');
 
 // Get the custom functionalities
-const v1Router = require('./v1/router');
-const v2Router = require('./v2/router');
+const v1Router = () => require('./v1/router');
+const v2Router = () => require('./v2/router');
 
 const getDbConnection = require('./db');
 const {createLogger, getLogger} = require('./logger');
 const getLoggerMiddleware = require('./middleware/logger');
 const defaultRequestHandler = require('./middleware/default');
 const {validateEnvironmentVariables} = require('./validation/configuration');
+const {validateSecretKeys, initializeSessionKey} = require('./validation/keys');
 
 function startApplication()
 {
+    // Validate and update environment variables
     validateEnvironmentVariables();
     
     // Configure and create App specific logger
     createLogger();
+
+    // Validation for secret keys, and generate session key
+    validateSecretKeys();
+    initializeSessionKey();
 
     // Invoke DB Connection
     const db = getDbConnection();
@@ -32,8 +38,8 @@ function startApplication()
     app.use(cors());
 
     app.use(getLoggerMiddleware());
-    app.use('/api/v1', v1Router);
-    app.use('/api/v2', v2Router);
+    app.use('/api/v1', v1Router());
+    app.use('/api/v2', v2Router());
     app.use(defaultRequestHandler);
 
     // Server Start Callback Function
