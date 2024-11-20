@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
 const {getLogger} = require('../logger');
-const {JWT_SECRET_KEY} = require('../../keys/app.json');
 
 const getAuthToken = (userId) => {
+    const JWT_SECRET_KEY = process.env.SESSION_KEY;
     const payload = { userId };
     const options = { expiresIn: 5 * 60 }; // 5 Minutes
     const token = jwt.sign(payload, JWT_SECRET_KEY, options);
@@ -11,6 +11,7 @@ const getAuthToken = (userId) => {
 
 const verifyAuthToken = (token) => {
     try{
+        const JWT_SECRET_KEY = process.env.SESSION_KEY;
         const payload = jwt.verify(token, JWT_SECRET_KEY);
         return payload.userId;
     }
