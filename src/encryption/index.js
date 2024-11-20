@@ -6,9 +6,16 @@ const encryptKeys = require('../../keys/encrypt.json');
 // Generates Secret Key and Initialization Vector
 function getSecretKeyAndIv(secretKeys, passcode)
 {
-    const {prefix, pepper, suffix, vector} = secretKeys;
-    const key = String.prototype.concat(prefix, passcode, pepper, suffix);
-    const iv = String.prototype.concat(vector, passcode);
+    const {prefix, suffix, vector} = secretKeys;
+    
+    const prefixBuffer = Buffer.from(prefix, 'base64url');
+    const suffixBuffer = Buffer.from(suffix, 'base64url');
+    const vectorBuffer = Buffer.from(vector, 'base64url');
+    const passcodeBuffer = Buffer.from(passcode);
+
+    const key = Buffer.concat([prefixBuffer, passcodeBuffer, suffixBuffer]);
+    const iv = Buffer.concat([vectorBuffer, passcodeBuffer]);
+
     return {key, iv};
 }
 
@@ -17,7 +24,7 @@ function encryptData(data, algorithm, secretKeys, passcode)
 {
     const {key, iv} = getSecretKeyAndIv(secretKeys, passcode);
 
-    const cipher = crypto.createCipheriv(algorithm, Buffer.from(key), Buffer.from(iv));
+    const cipher = crypto.createCipheriv(algorithm, key, iv);
     const encryptedHexCode = cipher.update(data, 'utf8', 'hex') + cipher.final('hex');
 
     const authTag = cipher.getAuthTag().toString('hex');
@@ -33,7 +40,7 @@ function decryptData(encryptedString, algorithm, secretKeys, passcode)
     const authTag = encryptedArray[0];
     const encryptedHexCode = encryptedArray[1];
 
-    const decipher = crypto.createDecipheriv(algorithm, Buffer.from(key), Buffer.from(iv));
+    const decipher = crypto.createDecipheriv(algorithm, key, iv);
     decipher.setAuthTag(Buffer.from(authTag, 'hex'));
 
     const decrypted = decipher.update(encryptedHexCode, 'hex', 'utf8') + decipher.final('utf8');
