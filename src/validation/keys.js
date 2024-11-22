@@ -3,6 +3,11 @@ const path = require('path');
 const factory = require('../factory');
 const {getLogger} = require('../logger');
 
+function getJsonFileName(filepath){
+    const keysIndex = filepath.indexOf('keys');
+    return filepath.substring(keysIndex);
+}
+
 // Validates if data is exactly same as pre-defined length
 function validateDataIntegrity(filepath, dataLength)
 {
@@ -12,13 +17,15 @@ function validateDataIntegrity(filepath, dataLength)
         const isDataValid = data.length === dataLength;
 
         if(!isDataValid){
-            logger.error('Data Integrity Breached', {filepath});
+            const jsonFile = getJsonFileName(filepath);
+            logger.error(`Data Integrity Breached: ${jsonFile}`);
         }
         return isDataValid;
     }
     catch(error){
         const {message, name, stack} = error;
-        logger.error(`Unable to read file: ${message}`, {name, stack, filepath});
+        const jsonFile = getJsonFileName(filepath);
+        logger.error(`Unable to read file, ${jsonFile}: ${message}`, {name, stack});
         return false;
     }
 }
@@ -41,7 +48,8 @@ function validateJsonFile(filepath, dataLength, generateRequiredKeys)
     catch(error){
         const logger = getLogger(__filename, 'validateJsonFile');
         const {message, name, stack} = error;
-        logger.error(`Failed to generate file or unable to write data: ${message}`, {name, stack, filepath});
+        const jsonFile = getJsonFileName(filepath);
+        logger.error(`Failed to generate JSON file, ${jsonFile}: ${message}`, {name, stack});
         return false;
     }
 }
