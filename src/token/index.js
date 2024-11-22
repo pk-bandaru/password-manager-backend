@@ -2,9 +2,12 @@ const jwt = require('jsonwebtoken');
 const {getLogger} = require('../logger');
 
 const getAuthToken = (userId) => {
+    const isDevEnvironment = process.env.ENVIRONMENT === 'dev';
+    const tokenExpiryTime = isDevEnvironment ? (12 * 60) : (5 * 60);
+    
     const JWT_SECRET_KEY = process.env.SESSION_KEY;
     const payload = { userId };
-    const options = { expiresIn: 5 * 60 }; // 5 Minutes
+    const options = { expiresIn: tokenExpiryTime };
     const token = jwt.sign(payload, JWT_SECRET_KEY, options);
     return token;
 }
