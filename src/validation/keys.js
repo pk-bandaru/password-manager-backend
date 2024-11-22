@@ -90,6 +90,12 @@ function validateSecretKeys()
 // Generates a unique 32 character key and stores in environment variable
 function initializeSessionKey()
 {
+    const isDevEnvironment = process.env.ENVIRONMENT === 'dev';
+    
+    if(isDevEnvironment){
+        process.env.SESSION_KEY = 'J!W@T#_S$E%C^R&E*T?_K<E]Y';
+        return;
+    }
     const sessionKey = factory.generateSessionKey();
     process.env.SESSION_KEY = sessionKey;
 }
